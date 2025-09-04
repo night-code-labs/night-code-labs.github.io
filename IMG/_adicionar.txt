@@ -1,6 +1,6 @@
 Adicionar apenas imagem, já está certo na planilha:
 
-nenhum
+MLMD
 ____________________________________________________________________________
 Zerados (Adicionar o jogo em si ou mudar seu status na planilha pra zerado):
 
