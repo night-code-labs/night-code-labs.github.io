@@ -396,15 +396,73 @@
 	.flip-horizontal {
 	  transform: scaleX(-1);
 	}
-}
 	
+	#infoButton {
+	  position: absolute;
+	  top: 30px;
+	  left: 30px;
+	  background: rgba(0,0,0,0.6);
+	  border: none;
+	  color: white;
+	  font-size: 1.5rem;
+	  border-radius: 50%;
+	  width: 40px;
+	  height: 40px;
+	  cursor: pointer;
+	  z-index: 3;
+	}
+		
+	  #infoModal {
+	  display: none;
+	  position: fixed;	  
+	  left: 0;
+	  top: 0;
+	  width: 100%;
+	  height: 100%;
+	  background: rgba(0,0,0,0.7);
+	  z-index: 4;
+	}
+	
+	#infoModal .modal-content {
+	  background: rgba(17,17,17,1);	  
+	  padding: 20px;
+	  border-radius: 12px;
+	  width: 80%;
+	  max-width: 500px;
+	  color: var(--text-color);
+	  position: absolute;
+	  top: 50%;
+	  left: 50%;
+	  transform: translate(-50%, -50%);
+	  z-index: 4;
+	}
+		
+	  #infoModal .close {
+	  position: absolute;
+	  top: 0px;
+	  right: 10px;
+	  color: #fff;
+	  font-size: 1.5rem;
+	  cursor: pointer;
+	}
+}		  	
   </style>
 </head>
 <body>
   <header id="header">
     <div class="cover-carousel" id="carousel"></div>
     <h1 id="mainTitle"></h1>	
+	<button id="infoButton">i</button>	
   </header>  
+
+  <div id="infoModal">
+	<div class="modal-content">
+	<span class="close">&times;</span>
+	<p>Night Magazine é uma página que criei para dar mais espaço fora das minhas planilhas para jogos que merecem e que sinto vontade de falar mais, se um jogo está aqui pode ter certeza que ele é muito especial para mim. Sinto que com isso a 
+	liberdade é bem maior, principalmente visualmente, consigo criar páginas extremamente personalizadas para cada jogo, falar abertamente deles e adicionar elementos específicos como músicas e screenshots que eu mesmo tirei enquanto me aventurava 
+	pelos seus mundos.</p>
+	</div>
+  </div>
 
   <div class="content" id="content"></div>  
   <div id="leftOverlay"></div>
@@ -876,6 +934,34 @@
     } else if (e.key === 'ArrowRight') {
       pendingIndex = getNextIndex();
       updatePageWithFade();
+    }
+  });
+  
+  // Modal
+  const infoBtn = document.getElementById('infoButton');
+  const infoModal = document.getElementById('infoModal');
+  const closeBtn = infoModal.querySelector('.close');
+
+  infoBtn.addEventListener('click', () => {
+    infoModal.style.display = "block";
+  });
+  
+  closeBtn.addEventListener('click', () => {
+    infoModal.style.display = "none";
+  });
+  
+  window.addEventListener('click', (e) => {
+    if (e.target === infoModal) {
+      infoModal.style.display = "none";
+    }
+  });
+    
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      const infoModal = document.getElementById("infoModal");
+      if (infoModal.style.display === "block") {
+        infoModal.style.display = "none";
+      }
     }
   });
   
