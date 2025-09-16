@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
+  <title>Night Magazine</title>
+  <style>
+    :root {
+      --theme-color1: #000000;
+	  --theme-color2: #000000;
+	  --effect-color: #000000;
+      --dropcap-color: #000000;
+	  --text-color: #ffffff;
+    }
+	
+	@property --border-shift {
+	  syntax: '<percentage>';
+	  inherits: true;
+	  initial-value: 0%;
+	}
+
+	html, body {
+	  margin: 0;
+	  padding: 0;
+	  color: var(--text-color);
+	  font-family: 'Rubik', sans-serif;
+	  line-height: 1.8;
+	  transition: background-color 0.5s;
+	  
+	  background: linear-gradient(180deg, var(--theme-color1), var(--theme-color2), var(--theme-color1));
+	  background-size: 100% 300%;
+	  animation: gradientWave 15s ease-in-out infinite;
+	}
+
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      height: 300px;
+      width: 100%;
+      background: center/cover no-repeat;
+      box-shadow: inset 0 0 100px black;
+      position: relative;
+      overflow: hidden;
+      z-index: 0;
+      transition: background-image 1s;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 0;
+    }
+
+    .cover-carousel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      z-index: 1;
+    }
+
+    .cover-item {
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.8);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s, opacity 0.3s;
+      user-select: none;
+    }
+
+    .cover-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+      user-select: none;
+    }
+
+    .cover-center {
+      width: 180px;
+      opacity: 1;
+      transform: scale(1);
+      cursor: default;
+    }
+
+    .cover-side {
+      width: 120px;
+      opacity: 0.5;
+      transform: scale(0.9);
+    }
+
+    header h1 {
+      position: relative;
+      z-index: 1;
+      padding: 0;
+      font-size: 2rem;
+      text-align: center;
+      margin: 0.5rem 0 0 0;
+      user-select: none;
+      color: var(--text-color);
+      transition: color 0.5s;
+    }
+
+    .content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      transition: color 0.5s;
+    }
+
+    .dropcap::first-letter {
+      display: block;
+      font-size: 3.5rem;
+      line-height: 1;
+      padding-bottom: 0.2rem;
+      font-weight: bold;
+      color: var(--dropcap-color);
+      transition: color 0.5s;
+    }
+
+    p {
+      text-align: justify;
+      margin-bottom: 1.5rem;
+    }
+
+    .quote {
+      border-left: 4px solid var(--dropcap-color);
+      padding-left: 1rem;
+      font-style: italic;
+      color: #ddd;
+      margin: 2rem 0;
+      transition: border-color 0.5s;
+    }
+
+    figure.gallery {
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    figure.gallery .main-image {
+      width: 100%;
+      max-width: 800px;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      user-select: none;
+      margin-bottom: 0.5rem;
+      transition: opacity 0.3s;
+    }
+
+    figure.gallery figcaption {
+      font-size: 0.9rem;
+      color: #ddd;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    .thumbnails {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .thumbnails img {
+      width: calc((800px - 2rem) / 3);
+      max-width: calc((100% - 2rem) / 3);
+      border-radius: 4px;	  
+      cursor: pointer;
+      opacity: 0.8;
+      transition: opacity 0.3s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.7);
+    }
+
+    .thumbnails img:hover {
+      opacity: 1;
+    }
+
+    /* Nova classe para a miniatura selecionada */
+    .thumbnails img.selected {
+      opacity: 1;      
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-color);
+      margin: 4rem 0 2rem;
+    }
+
+    @media (max-width: 800px) {
+      .cover-center {
+        width: 140px;
+      }
+
+      .cover-side {
+        width: 100px;
+      }
+
+      header h1 {
+        font-size: 2rem;
+        padding: 0.5rem 1rem;
+      }
+
+      .thumbnails img {
+        width: calc((100% - 2rem) / 3);
+      }
+    }
+	
+	#leftOverlay, #rightOverlay {
+      position: fixed;      
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      opacity: 1;
+      pointer-events: none;
+      z-index: 2;
+      transition: all 0.5s;
+  }
+  
+	@keyframes gradientWave {
+	  0% {
+	    background-position: 0% 0%;
+	  }
+	  50% {
+	    background-position: 0% 100%;
+	  }
+	  100% {
+		  background-position: 0% 0%;
+	    }
+	  }
+	
+	@keyframes borderShiftBorder {
+	  0% {
+	 	 background-position: 0% 0%;
+	  }
+	  
+	  100% {
+	 	 background-position: 200% 0%;
+	  }
+	}
+	
+	@keyframes borderShiftText {
+	  0% {
+        background-position: 200% 0%;
+	  }
+	  
+	100% {
+		background-position: 0% 0%;
+	  }
+	}
+	
+	.rating-section {
+	  --border-shift: 0%;
+	  position: relative;
+	  background-color: rgba(0,0,0,0.6);
+	  padding: 1rem;
+	  margin: 2rem 0;
+	  color: var(--text-color);
+	  text-align: center;
+	  border-radius: 12px;
+	  border: 4px solid transparent;
+	  overflow: visible;
+	  z-index: 0;
+	  animation: borderShift 5s linear infinite;
+	}
+	
+	.rating-score {
+	  font-size: 2.5rem;
+	  font-weight: bold;
+	  margin: 0 0 0.5rem 0;
+	  text-align: center;
+	  background: linear-gradient(
+	 	 90deg,
+	 	 var(--dropcap-color) 0%,
+	 	 var(--effect-color) 20%,
+	 	 var(--dropcap-color) 40%,
+	 	 var(--dropcap-color) 100%
+	  );
+	  background-size: 200% 100%;
+	  animation: borderShiftText 5s linear infinite;
+	  animation-delay: -0.5s;
+	  background-clip: text;
+	  -webkit-background-clip: text;
+	  color: transparent;
+	  -webkit-text-fill-color: transparent;	  
+	}
+	
+	.rating-description {
+	  font-style: italic;
+	  color: #ddd;
+	  margin: 0;
+	  text-align: center;
+	  transition: color 0.5s;
+	}
+	
+	.rating-section::before {
+	  content: "";
+	  position: absolute;
+	  top: -4px; left: -4px; right: -4px; bottom: -4px;
+	  border-radius: 12px;
+	  padding: 4px;
+	  background: linear-gradient(
+		90deg,
+		var(--dropcap-color) 0%,
+		var(--effect-color) 20%,
+		var(--dropcap-color) 40%,
+		var(--dropcap-color) 100%
+		);
+	  background-size: 200% 100%;
+	  animation: borderShiftBorder 5s linear infinite;
+	  -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+      z-index: -1;
+	}
+	
+	.rating-section::after {
+	  content: "";
+	  position: absolute;
+	  top: -4px; left: -4px; right: -4px; bottom: -4px;
+	  border-radius: 12px;
+	  padding: 4px;
+	  background: linear-gradient(
+		90deg,
+		var(--dropcap-color) 0%,
+		var(--effect-color) 20%,
+		var(--dropcap-color) 40%,
+		var(--dropcap-color) 100%
+		);
+	  background-size: 200% 100%;
+	  animation: borderShiftBorder 5s linear infinite;	  
+	  transform: scaleX(-1);
+	  -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+      z-index: -1;
+	}
+	
+	#startAudioButton {
+	  display: inline-flex;             
+	  width: 100%;              
+	  max-width: 800px;          
+	  margin: 2rem auto 3rem auto;
+	  height: 56px;
+	  border-radius: 12px;
+	  background: linear-gradient(180deg, var(--dropcap-color), var(--effect-color));
+	  background-size: 100% 300%;
+	  color: #fff;
+	  text-shadow: 0 0 3px rgba(0,0,0,0.6);
+	  border: 2px solid var(--dropcap-color);
+	  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	  cursor: pointer;
+	  font-size: 1.6rem;
+	  font-weight: 600;
+	  transition: box-shadow 0.3s, transform 0.2s;
+	  animation: gradientWave 15s ease-in-out infinite;
+	  user-select: none;  
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  gap: 10px; /* espaço entre o ícone e o texto */
+	}
+
+	#startAudioButton:hover {
+	  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+	  transform: scale(1.05);
+	}
+
+	#startAudioButton::before {
+	  content: '▶'; /* símbolo play */
+	  display: inline-block;
+	  margin-right: 0.8rem;
+	  font-size: 1.8rem;
+	  font-weight: bold;
+	  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.6));
+	  transform: translateY(-2px)
+	}
+	
+	#startAudioButton.playing::before {
+	  content: '⏸'; /* pause */
+	  transform: translateY(-4px)
+	}
+	
+	.flip-horizontal {
+	  transform: scaleX(-1);
+	}
+}
+	
+  </style>
+</head>
+<body>
+  <header id="header">
+    <div class="cover-carousel" id="carousel"></div>
+    <h1 id="mainTitle"></h1>	
+  </header>  
+
+  <div class="content" id="content"></div>  
+  <div id="leftOverlay"></div>
+  <div id="rightOverlay"></div>
+  
+  <button id="startAudioButton" type="button" aria-label="audio">
+  <span class="audioName"></span>
+  </button>
+
+  <footer>
+    Night Magazine - 2025
+  </footer>
+  
+  <audio id="gameAudio" loop></audio>
+
+  <script>
+  const games = [
+    {
+      title: "Red Dead Redemption 2",
+      cover: "https://night-games.github.io/projects/IMG/RDR2.jpg",
+      background: "https://night-games.github.io/projects/Outros/rdr2/rdr2_bg.png",
+      themeColor1: "#000000",
+      themeColor2: "#000000",
+	  effectColor: "#330000",
+      dropcapColor: "#ff3333",
+      textColor: "#ffffff",
+      audio: "https://night-games.github.io/projects/Outros/rdr2/youre_my_brother.mp3",
+      audioName: "You're My Brother",
+      quote: "“A landmark in open-world design and interactive storytelling.”",
+      ratingScore: "11.0/11.0",
+      ratingDescription: "A landmark in open-world design with masterful storytelling.",
+      paragraphs: [
+        "Red Dead Redemption 2 isn't just another open world game. It’s a journey into the dying days of the Wild West, where loyalty, greed, and survival clash in every decision.",
+        "The sound design is masterful: the howl of the wind over the plains, the crack of revolver shots, the quiet chatter at camp. Every detail builds immersion.",
+        "Combat feels weighty and deliberate. Mistakes are punished, but the game is fair. The landscapes are breathtakingly real, making every ride feel like a journey.",
+        "For those willing to dive in, it offers an experience that lingers long after the credits roll."
+      ],
+      gallery: [
+        "https://images.steamusercontent.com/ugc/1995688705698123701/1185D873B68A7AE3FEF5C5C00666741856EDE944/",
+        "https://images.steamusercontent.com/ugc/1995688705698123573/8DD90A0ACAD04E0203D2FBFC5780B59E0E46BA9D/",
+        "https://images.steamusercontent.com/ugc/1995688705698123153/141BBD14D01B6073886B98BE36F0EBE91F53A1BD/"
+      ],
+      galleryCaptions: [
+        "A tense duel as the sun sets over the frontier.",
+        "A dusty trail leading into the sunset.",
+        "A lone rider in the open plains."
+      ],
+      leftOverlay: {
+        image: 'URL_ESQUERDA',
+        side: 'left',
+        offset: '-300px',
+        width: '0px',
+        height: '0px',
+        bottom: '0px',
+		flipHorizontal: false		
+      },
+      rightOverlay: {
+        image: 'https://night-games.github.io/projects/Outros/rdr2/rdr2_dutch.png',
+        side: 'right',
+        offset: '-275px',
+        width: '815px',
+        height: '1006px',
+        bottom: '0px',
+		flipHorizontal: false	
+      }
+    },
+    {
+      title: "Red Dead Redemption",
+      cover: "https://night-games.github.io/projects/IMG/RDR1.jpg",
+      background: "https://night-games.github.io/projects/Outros/rdr1/rdr1_bg.png",
+      themeColor1: "#7e1921",
+      themeColor2: "#330000",
+	  effectColor: "#330000",
+      dropcapColor: "#ff3333",
+      textColor: "#ffffff",
+      audio: "https://night-games.github.io/projects/Outros/rdr1/exodus_in_america.mp3",
+      audioName: "Exodus in America",
+      quote: "“A gritty classic of the open-world genre.”",
+      ratingScore: "10.9/11.0",
+      ratingDescription: "A landmark in open-world design with masterful storytelling.",
+      paragraphs: [
+        "Red Dead Redemption defined what a Western game could be. A brutal world where justice is often out of reach.",
+        "The soundtrack evokes dusty trails and lonely duels, while the story is tragic yet deeply human.",
+        "Gunfights are tense and lethal. There's no forgiveness in the frontier, only choices with consequences.",
+        "A must-play for anyone craving a darker, more mature Western tale."
+      ],
+      gallery: [
+        "https://images.steamusercontent.com/ugc/2394319269765547798/B71C58C9E8487D230F8D524027A0493D10B765FC/",
+        "https://images.steamusercontent.com/ugc/58080317149631042/F14FA3CCB8BC78529BF7E646CA52B29682ED1FE7/",
+        "https://images.steamusercontent.com/ugc/58080317149630221/00F21C666EEE06CA00529FD8C3CC2A0D070F56CE/"
+      ],
+      galleryCaptions: [
+        "A tense duel as the sun sets over the frontier.",
+        "A dusty trail leading into the sunset.",
+        "A lone rider in the open plains."
+      ],
+      leftOverlay: {
+        image: 'URL_ESQUERDA',
+        side: 'right',
+        offset: '-170px',
+        width: '824px',
+        height: '969px',
+        bottom: '0px',
+		flipHorizontal: false		
+      },
+      rightOverlay: {
+        image: 'https://night-games.github.io/projects/Outros/rdr1/rdr1_nun.png',
+        side: 'right',
+        offset: '-200px',
+        width: '824px',
+        height: '969px',
+        bottom: '0px',
+		flipHorizontal: true		
+      }
+    },
+    {
+      title: "ELDEN RING",
+      cover: "https://night-games.github.io/projects/IMG/ELDR.jpg",
+      background: "https://night-games.github.io/projects/Outros/eldr/eldr_bg.png",
+      themeColor1: "#194341",
+      themeColor2: "#0e2625",
+	  effectColor: "#194341",
+      dropcapColor: "#c0c000",
+      textColor: "#ffffff",
+      audio: "https://night-games.github.io/projects/Outros/eldr/elden_beast.mp3",
+      audioName: "Elden Beast",
+      quote: "“A haunting, unforgettable open-world adventure.”",
+      ratingScore: "10.9/11.0",
+      ratingDescription: "A landmark in open-world design with masterful storytelling.",
+      paragraphs: [
+        "Elden Ring isn't just a game. It's a realm of endless possibilities, where danger and wonder coexist at every step.",
+        "Its world is vast and terrifyingly beautiful, with twisted castles, foggy marshes, and broken ruins that beg to be explored.",
+        "Combat is brutal yet fair. Bosses are relentless, testing your patience and skill. But victory is always rewarding.",
+        "For those willing to brave it, Elden Ring offers a journey that scars and enlightens in equal measure."
+      ],
+      gallery: [
+        "https://images.steamusercontent.com/ugc/2274947880846006368/986D3CF678122FBB2E47E186DC61236D75D08149/",
+        "https://images.steamusercontent.com/ugc/2274947880846006185/1C50BB44CE77609CC935314D4D7C3CA317AB7991/",
+        "https://images.steamusercontent.com/ugc/2496764917674787992/42CCCFDFCEEEC26D98E914709E5CBB0A3C35A0FB/"
+      ],
+      galleryCaptions: [
+        "A tense duel as the sun sets over the frontier.",
+        "A dusty trail leading into the sunset.",
+        "A lone rider in the open plains."
+      ],
+      leftOverlay: {
+        image: 'URL_ESQUERDA',
+        side: 'left',
+        offset: '-200px',
+        width: '900px',
+        height: '900px',
+        bottom: '55px',
+		flipHorizontal: false		
+      },
+      rightOverlay: {
+        image: 'https://night-games.github.io/projects/Outros/eldr/eldr_rennala.png',
+        side: 'right',
+        offset: '-250px',
+        width: '800px',
+        height: '800px',
+        bottom: '-100px',
+		flipHorizontal: false		
+      }
+    },
+    {
+      title: "Finding Paradise",
+      cover: "https://night-games.github.io/projects/IMG/FNDP.jpg",
+      background: "https://night-games.github.io/projects/Outros/fndp/fndp_bg.png",
+      themeColor1: "#00375c",
+      themeColor2: "#001a3f",
+	  effectColor: "#00375c",
+      dropcapColor: "#88ccee",
+      textColor: "#ffffff",
+      audio: "https://night-games.github.io/projects/Outros/fndp/fayes_theme_piano.mp3",
+      audioName: "Faye's Theme (Piano Version)",
+      quote: "“Bittersweet, emotional storytelling at its best.”",
+      ratingScore: "11.0/11.0",
+      ratingDescription: "A landmark in open-world design with masterful storytelling.",
+      paragraphs: [
+        "Finding Paradise is a story-driven game about memories, regret, and the chance to make peace before the end.",
+        "Its pixel art style hides emotional depth, with music that tugs at your heartstrings at just the right moments.",
+        "Gameplay is simple but effective. You explore memories, stitch them together, and reveal hidden truths.",
+        "A short but powerful experience that stays with you long after you finish."
+      ],
+      gallery: [
+	    "https://images.steamusercontent.com/ugc/13100685133679947175/813C0EF977F9E0888819527FAAA23EB784CB8D6B/",
+        "https://images.steamusercontent.com/ugc/9690867227026772202/4EF4A588DF79DC480A5DB2D77A7DC7593854C86E/",
+        "https://images.steamusercontent.com/ugc/13297903817169688428/4E0FA33B2A786AE8066323983BF691DE0261938D/"
+      ],
+      galleryCaptions: [
+        "A tense duel as the sun sets over the frontier.",
+        "A dusty trail leading into the sunset.",
+        "A lone rider in the open plains."
+      ],
+      leftOverlay: {
+        image: 'URL_ESQUERDA',
+        side: 'left',
+        offset: '45px',
+        width: '407px',
+        height: '503px',
+        bottom: '0px',
+		flipHorizontal: false		
+      },
+      rightOverlay: {
+        image: 'https://night-games.github.io/projects/Outros/fndp/fndp_art.png',
+        side: 'right',
+        offset: '-500px',
+        width: '1400px',
+        height: '619px',
+        bottom: '-60px',
+		flipHorizontal: false		
+      }
+    },
+    {
+      title: "The Last of Us",
+      cover: "https://night-games.github.io/projects/IMG/TLOU.jpg",
+      background: "https://night-games.github.io/projects/Outros/tlou/tlou_bg.jpg",
+      themeColor1: "#794e2e",
+      themeColor2: "#9c5c2c",
+	  effectColor: "#794e2e",
+      dropcapColor: "#f5d389",
+      textColor: "#ffffff",
+      audio: "https://night-games.github.io/projects/Outros/tlou/the_path_a_new_beginning.mp3",
+      audioName: "The Path (A New Beginning)",
+      quote: "“An emotionally devastating masterpiece.”",
+      ratingScore: "11.0/11.0",
+      ratingDescription: "A landmark in open-world design with masterful storytelling.",
+      paragraphs: [
+        "The Last of Us is more than a survival game. It's a gut-wrenching tale of loss, love, and the lengths we'll go to protect.",
+        "Its world is grim and brutal. Nature reclaims cities, while humanity turns on itself in the struggle to survive.",
+        "Combat is desperate, scavenging is essential, and every bullet feels precious. Stealth and strategy matter.",
+        "A narrative-driven experience that will haunt you long after the credits roll."
+      ],
+      gallery: [
+        "https://images.steamusercontent.com/ugc/2462983308930309284/EB0D7DD2F5DCF863AC33FB37BD6C2BF9CDA97B57/",
+        "https://images.steamusercontent.com/ugc/2441591931345254323/36125EEA06C14CF0754AB566D87B0D3E4DE609AA/",
+        "https://images.steamusercontent.com/ugc/2441591931345253369/D31CD8C2039C42C16A9697DC152B49771437047F/"
+      ],
+      galleryCaptions: [
+        "A tense duel as the sun sets over the frontier.",
+        "A dusty trail leading into the sunset.",
+        "A lone rider in the open plains."
+      ],
+      leftOverlay: {
+        image: 'URL_ESQUERDA',
+        side: 'left',
+        offset: '45px',
+        width: '407px',
+        height: '503px',
+        bottom: '0px',
+		flipHorizontal: false
+      },
+      rightOverlay: {
+        image: 'https://night-games.github.io/projects/Outros/tlou/tlou_art.png',
+        side: 'right',
+        offset: '-240px',
+        width: '1000px',
+        height: '1000px',
+        bottom: '-200px',
+		flipHorizontal: true
+      }
+    }
+  ];
+
+  const header = document.getElementById('header');
+  const carousel = document.getElementById('carousel');
+  const mainTitle = document.getElementById('mainTitle');
+  const content = document.getElementById('content');
+  const audioElement = document.getElementById('gameAudio');
+  const btn = document.getElementById('startAudioButton');
+  
+  const savedIndex = parseInt(localStorage.getItem('lastGameIndex'));
+  let currentIndex = (Number.isInteger(savedIndex) && savedIndex >= 0 && savedIndex < games.length) ? savedIndex : 0;
+    
+  let pendingIndex = null;
+  
+  function getPrevIndex() {
+    return (currentIndex - 1 + games.length) % games.length;
+  }
+  
+  function getNextIndex() {
+    return (currentIndex + 1) % games.length;
+  }
+    
+  function fadeOutAndSwitchAudio(nextIndex) {
+    if (audioElement.paused || audioElement.volume === 0) {      
+      switchAudio(nextIndex);
+      return;
+    }
+  
+    let fadeAudio = setInterval(() => {
+      if (audioElement.volume > 0.05) {
+        audioElement.volume = Math.max(0, audioElement.volume - 0.05);
+      } else {
+        clearInterval(fadeAudio);
+        audioElement.pause();
+        audioElement.volume = 1;
+        switchAudio(nextIndex);
+      }
+    }, 100);
+  }
+    
+  function switchAudio(index) {
+    const game = games[index];
+    if (audioElement.src !== game.audio) {
+      audioElement.src = game.audio || '';
+      audioElement.load();
+    }
+    
+    const audioNameSpan = btn.querySelector('.audioName');
+    if(audioNameSpan) {
+      audioNameSpan.textContent = game.audioName || "Not everything should be named";
+    }
+    btn.classList.remove('playing');
+  }
+  
+  function renderCarousel() {
+    carousel.innerHTML = '';
+  
+    const prev = document.createElement('div');
+    prev.classList.add('cover-item', 'cover-side');
+    prev.innerHTML = `<img src="${games[getPrevIndex()].cover}" alt="${games[getPrevIndex()].title}">`;
+    prev.addEventListener('click', () => {      
+      pendingIndex = getPrevIndex();
+      updatePageWithFade();
+    });
+    carousel.appendChild(prev);
+  
+    const center = document.createElement('div');
+    center.classList.add('cover-item', 'cover-center');
+    center.innerHTML = `<img src="${games[currentIndex].cover}" alt="${games[currentIndex].title}">`;
+    carousel.appendChild(center);
+  
+    const next = document.createElement('div');
+    next.classList.add('cover-item', 'cover-side');
+    next.innerHTML = `<img src="${games[getNextIndex()].cover}" alt="${games[getNextIndex()].title}">`;
+    next.addEventListener('click', () => {
+      pendingIndex = getNextIndex();
+      updatePageWithFade();
+    });
+    carousel.appendChild(next);
+  
+    mainTitle.textContent = games[currentIndex].title;
+  }
+  
+  function renderContent() {
+    const game = games[currentIndex];
+    let currentGalleryIndex = 0;
+  
+    content.innerHTML = `
+      <p class="dropcap">${game.paragraphs[0]}</p>
+      <p>${game.paragraphs[1]}</p>
+      <div class="quote">${game.quote}</div>
+      <p>${game.paragraphs[2]}</p>
+      <figure class="gallery">
+        <img class="main-image" src="${game.gallery[currentGalleryIndex]}" alt="${game.galleryCaptions ? game.galleryCaptions[currentGalleryIndex] : ''}">
+        <figcaption class="gallery-caption">${game.galleryCaptions ? game.galleryCaptions[currentGalleryIndex] : ''}</figcaption>
+        <div class="thumbnails">
+          ${game.gallery.map((src, i) => `<img src="${src}" alt="${game.galleryCaptions ? game.galleryCaptions[i] : ''}" data-index="${i}" class="${i === currentGalleryIndex ? 'selected' : ''}">`).join('')}
+        </div>
+      </figure>
+      <p style="text-align: center;">${game.paragraphs[3]}</p>
+      <section class="rating-section">
+        <div class="rating-score">${game.ratingScore}</div>
+        <p class="rating-description">${game.ratingDescription}</p>
+      </section>
+    `;
+  
+    const mainImage = document.querySelector('.main-image');
+    const caption = document.querySelector('.gallery-caption');
+    const thumbnails = document.querySelectorAll('.thumbnails img');
+  
+    thumbnails.forEach((thumb) => {
+      thumb.addEventListener('click', () => {
+        const index = parseInt(thumb.getAttribute('data-index'));
+        mainImage.src = game.gallery[index];
+        mainImage.alt = game.galleryCaptions ? game.galleryCaptions[index] : '';
+        caption.textContent = game.galleryCaptions ? game.galleryCaptions[index] : '';
+  
+        thumbnails.forEach(img => img.classList.remove('selected'));
+        thumb.classList.add('selected');
+      });
+    });
+  }
+  
+  btn.addEventListener('click', () => {
+    if (audioElement.paused) {
+      audioElement.play();
+      btn.classList.add('playing');
+    } else {
+      audioElement.pause();
+      btn.classList.remove('playing');
+    }
+  });
+  
+  function updateTheme() {
+    const game = games[currentIndex];
+    document.documentElement.style.setProperty('--theme-color1', game.themeColor1);
+    document.documentElement.style.setProperty('--theme-color2', game.themeColor2);
+	document.documentElement.style.setProperty('--effect-color', game.effectColor);
+    document.documentElement.style.setProperty('--dropcap-color', game.dropcapColor);
+    document.documentElement.style.setProperty('--text-color', game.textColor);
+  
+    header.style.backgroundImage = `url('${game.background}')`;
+  
+    const leftOverlayDiv = document.getElementById('leftOverlay');
+    const rightOverlayDiv = document.getElementById('rightOverlay');
+  
+    const leftOverlay = game.leftOverlay;
+    const rightOverlay = game.rightOverlay;
+  
+    if (leftOverlay) {
+      leftOverlayDiv.style.backgroundImage = `url('${leftOverlay.image}')`;
+      leftOverlayDiv.style.left = leftOverlay.offset;
+      leftOverlayDiv.style.right = '';
+      leftOverlayDiv.style.width = leftOverlay.width;
+      leftOverlayDiv.style.height = leftOverlay.height;
+      leftOverlayDiv.style.bottom = leftOverlay.bottom;
+	  leftOverlayDiv.classList.toggle('flip-horizontal', !!leftOverlay.flipHorizontal);	  
+    } else {
+      leftOverlayDiv.style.backgroundImage = '';
+      leftOverlayDiv.style.width = '0px';
+      leftOverlayDiv.style.height = '0px';
+	  leftOverlayDiv.classList.remove('flip-horizontal');
+    }
+  
+    if (rightOverlay) {
+      rightOverlayDiv.style.backgroundImage = `url('${rightOverlay.image}')`;
+      rightOverlayDiv.style.right = rightOverlay.offset;
+      rightOverlayDiv.style.left = '';
+      rightOverlayDiv.style.width = rightOverlay.width;
+      rightOverlayDiv.style.height = rightOverlay.height;
+      rightOverlayDiv.style.bottom = rightOverlay.bottom;
+	  rightOverlayDiv.classList.toggle('flip-horizontal', !!rightOverlay.flipHorizontal);	  
+    } else {
+      rightOverlayDiv.style.backgroundImage = '';
+      rightOverlayDiv.style.width = '0px';
+      rightOverlayDiv.style.height = '0px';
+	  rightOverlayDiv.classList.remove('flip-horizontal');
+    }
+  }
+  
+  // Atualiza só a página (conteúdo e tema) sem mexer no áudio
+  function updatePageContentOnly() {
+    updateTheme();
+    renderCarousel();
+    renderContent();
+    localStorage.setItem('lastGameIndex', currentIndex);
+  }
+  
+  // Essa função gerencia a troca com fade no áudio
+  function updatePageWithFade() {
+    if (pendingIndex === null) return;
+      
+    updatePageContentOnly();
+      
+    fadeOutAndSwitchAudio(pendingIndex);
+    
+    currentIndex = pendingIndex;
+    pendingIndex = null;
+      
+    updatePageContentOnly();
+  }
+    
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') {
+      pendingIndex = getPrevIndex();
+      updatePageWithFade();
+    } else if (e.key === 'ArrowRight') {
+      pendingIndex = getNextIndex();
+      updatePageWithFade();
+    }
+  });
+  
+  updatePageContentOnly();
+  switchAudio(currentIndex);
+</script>
+</body>
+</html>
