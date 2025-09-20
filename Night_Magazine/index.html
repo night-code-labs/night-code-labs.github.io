@@ -1019,6 +1019,10 @@
     }
   });
   
+	function hideOverlays() {
+      return window.innerWidth <= 768;
+    }
+  
   function updateTheme() {
     const game = games[currentIndex];
     document.documentElement.style.setProperty('--theme-color1', game.themeColor1);
@@ -1033,9 +1037,11 @@
     const rightOverlayDiv = document.getElementById('rightOverlay');
   
     const leftOverlay = game.leftOverlay;
-    const rightOverlay = game.rightOverlay;
+    const rightOverlay = game.rightOverlay;	
   
-    if (leftOverlay) {
+	updateInfoButton();
+  
+    if (leftOverlay && !hideOverlays()) {
       leftOverlayDiv.style.backgroundImage = `url('${leftOverlay.image}')`;
       leftOverlayDiv.style.left = leftOverlay.offset;
       leftOverlayDiv.style.right = '';
@@ -1050,7 +1056,7 @@
 	  leftOverlayDiv.classList.remove('flip-horizontal');
     }
   
-    if (rightOverlay) {
+    if (rightOverlay && !hideOverlays()) {
       rightOverlayDiv.style.backgroundImage = `url('${rightOverlay.image}')`;
       rightOverlayDiv.style.right = rightOverlay.offset;
       rightOverlayDiv.style.left = '';
@@ -1063,7 +1069,7 @@
       rightOverlayDiv.style.width = '0px';
       rightOverlayDiv.style.height = '0px';
 	  rightOverlayDiv.classList.remove('flip-horizontal');
-    }
+    }	
   }
   
   // Atualiza só a página (conteúdo e tema) sem mexer no áudio
@@ -1102,6 +1108,10 @@
   const infoBtn = document.getElementById('infoButton');
   const infoModal = document.getElementById('infoModal');
   const closeBtn = infoModal.querySelector('.close');
+
+  function updateInfoButton() {
+    infoButton.style.display = hideOverlays() ? 'none' : 'block';
+  }
 
   infoBtn.addEventListener('click', () => {
     infoModal.style.display = "block";
