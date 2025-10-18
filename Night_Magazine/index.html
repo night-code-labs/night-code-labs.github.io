@@ -190,8 +190,7 @@
     .thumbnails img:hover {
       opacity: 1;
     }
-
-    /* Nova classe para a miniatura selecionada */
+    
     .thumbnails img.selected {
       opacity: 1;      
     }
@@ -231,7 +230,7 @@
       pointer-events: none;
       z-index: 2;
       transition: all 0.5s;
-  }
+	}
   
 	@keyframes gradientWave {
 	  0% {
@@ -1021,10 +1020,10 @@
   });
   
 	function hideOverlays() {
-      return window.innerWidth <= 768;
+      return window.innerWidth <= 0;
     }
-  
-  function updateTheme() {
+	  
+	function updateTheme() {
     const game = games[currentIndex];
     document.documentElement.style.setProperty('--theme-color1', game.themeColor1);
     document.documentElement.style.setProperty('--theme-color2', game.themeColor2);
@@ -1042,35 +1041,52 @@
   
 	updateInfoButton();
   
-    if (leftOverlay && !hideOverlays()) {
-      leftOverlayDiv.style.backgroundImage = `url('${leftOverlay.image}')`;
-      leftOverlayDiv.style.left = leftOverlay.offset;
-      leftOverlayDiv.style.right = '';
-      leftOverlayDiv.style.width = leftOverlay.width;
-      leftOverlayDiv.style.height = leftOverlay.height;
-      leftOverlayDiv.style.bottom = leftOverlay.bottom;
-	  leftOverlayDiv.classList.toggle('flip-horizontal', !!leftOverlay.flipHorizontal);	  
-    } else {
-      leftOverlayDiv.style.backgroundImage = '';
-      leftOverlayDiv.style.width = '0px';
-      leftOverlayDiv.style.height = '0px';
+    function adjustOverlaySize(overlayDiv, overlayData) {
+	  const screenWidth = window.innerWidth;
+	  const newWidth = screenWidth * 0.444444;
+	  
+	  overlayDiv.style.width = newWidth + 'px';
+		
+	  const originalWidth = parseInt(overlayData.width);
+	  const originalHeight = parseInt(overlayData.height);
+	  overlayDiv.style.height = (originalHeight / originalWidth * newWidth) + 'px';
+	}
+		
+	if (leftOverlay && !hideOverlays()) {
+	  leftOverlayDiv.style.backgroundImage = `url('${leftOverlay.image}')`;
+	  leftOverlayDiv.style.left = leftOverlay.offset;
+	  leftOverlayDiv.style.right = '';
+	  leftOverlayDiv.style.bottom = leftOverlay.bottom;
+	  leftOverlayDiv.classList.toggle('flip-horizontal', !!leftOverlay.flipHorizontal);
+	  
+	  adjustOverlaySize(leftOverlayDiv, leftOverlay);
+	} else {
+	  leftOverlayDiv.style.backgroundImage = '';
+	  leftOverlayDiv.style.width = '0px';
+	  leftOverlayDiv.style.height = '0px';
 	  leftOverlayDiv.classList.remove('flip-horizontal');
-    }
-  
-    if (rightOverlay && !hideOverlays()) {
-      rightOverlayDiv.style.backgroundImage = `url('${rightOverlay.image}')`;
-      rightOverlayDiv.style.right = rightOverlay.offset;
-      rightOverlayDiv.style.left = '';
-      rightOverlayDiv.style.width = rightOverlay.width;
-      rightOverlayDiv.style.height = rightOverlay.height;
-      rightOverlayDiv.style.bottom = rightOverlay.bottom;
-	  rightOverlayDiv.classList.toggle('flip-horizontal', !!rightOverlay.flipHorizontal);	  
-    } else {
-      rightOverlayDiv.style.backgroundImage = '';
-      rightOverlayDiv.style.width = '0px';
-      rightOverlayDiv.style.height = '0px';
+	}
+	
+	if (rightOverlay && !hideOverlays()) {
+	  rightOverlayDiv.style.backgroundImage = `url('${rightOverlay.image}')`;
+	  rightOverlayDiv.style.right = rightOverlay.offset;
+	  rightOverlayDiv.style.left = '';
+	  rightOverlayDiv.style.bottom = rightOverlay.bottom;
+	  rightOverlayDiv.classList.toggle('flip-horizontal', !!rightOverlay.flipHorizontal);
+	  
+	  adjustOverlaySize(rightOverlayDiv, rightOverlay);
+	} else {
+	  rightOverlayDiv.style.backgroundImage = '';
+	  rightOverlayDiv.style.width = '0px';
+	  rightOverlayDiv.style.height = '0px';
 	  rightOverlayDiv.classList.remove('flip-horizontal');
-    }	
+	}
+	
+	// listener pra redimensionamento da tela
+	window.addEventListener('resize', () => {
+	  if (leftOverlay && !hideOverlays()) adjustOverlaySize(leftOverlayDiv, leftOverlay);
+	  if (rightOverlay && !hideOverlays()) adjustOverlaySize(rightOverlayDiv, rightOverlay);
+	});
   }
   
   // Atualiza só a página (conteúdo e tema) sem mexer no áudio
