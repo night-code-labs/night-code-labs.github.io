@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="https://night-games.github.io/projects/Outros/Night2.png" type="image/png">
-  <title>Are you lost ?</title>
+  <link rel="icon" href="https://night-games.github.io/projects/Outros/patinha_amor.png" type="image/png">
+  <title>Are you in love ?</title>
   <style>
     html, body {
       margin: 0;
@@ -31,6 +31,9 @@
       justify-content: center;
       align-items: center;
       z-index: 10;
+	  
+	  opacity: 1;
+	  transition: opacity 7s ease;
     }
 
     #overlay h1 {
@@ -70,12 +73,23 @@
       display: none;
       height: 100vh;
       width: 100vw;
-      background: url('https://night-games.github.io/projects/Outros/mist.gif') no-repeat center center;
+      position: relative;
+      background: url('https://r2.guns.lol/10f23612-4105-4d92-85ce-82fe1349435e.gif') no-repeat center center;
       background-size: cover;
       display: flex;
       justify-content: center;
       align-items: center;
     }
+
+	#main::before {
+	  content: "";
+	  position: absolute;
+	  top: 0; left: 0;
+	  width: 100%;
+	  height: 100%;
+	  background-color: rgba(0,0,0,0.5);
+	  z-index: 1;
+	}
 
     #main h1 {
       color: white;
@@ -86,8 +100,11 @@
       font-weight: normal;
       cursor: pointer;
       transition: transform 0.3s ease;
+	  
+	  position: relative;
+	  z-index: 2;
     }
-  
+	
     #main h1:hover {
       transform: translateY(-10px);
     }
@@ -95,11 +112,44 @@
     #overlay h1:hover {
       transform: translateY(-10px);
     }
+	
+	.hover-gradient {
+	  position: relative;
+	  display: inline-block;
+	  cursor: pointer;
+	  color: white;
+	  overflow: hidden;
+	}
+	
+	.hover-gradient::after {
+	  content: "Are you in love ?";
+	  position: absolute;
+	  top: 0; left: 0;
+	  width: 0;
+	  height: 100%;
+	  color: #FF8AED;
+	  overflow: hidden;
+	  white-space: nowrap;
+	  transition: width 0.8s ease;
+	}
+	
+	.hover-gradient:hover::after {
+	  width: 100%;
+	}
+
+	.link-wrapper {
+      text-decoration: none;
+      color: inherit;
+      display: inline-block;
+	}
+	
   </style>
 </head>
 <body>  
-  <div id="overlay">
-    <h1>Are you lost ?</h1>
+  <div id="overlay">    
+	<a href="https://steamcommunity.com/id/BonnieBlonde" target="_blank" class="link-wrapper">
+	  <h1 class="hover-gradient">Are you in love ?</h1>
+	</a>
     <div>
       <button id="yesBtn">Yes</button>
       <button id="noBtn">No</button>
@@ -111,7 +161,7 @@
   </div>
 
   <audio id="bgAudio" loop>
-    <source id="audioSource" src="https://night-games.github.io/projects/Outros/L%20no%20Nakama.mp3" type="audio/mpeg" />
+    <source id="audioSource" src="https://night-games.github.io/projects/Outros/msc_amor.mp3" type="audio/mpeg" />
   </audio>
 
   <script>
@@ -124,19 +174,30 @@
     const noBtn = document.getElementById('noBtn');
     
     const audioLinks = {
-      yes: 'https://night-games.github.io/projects/Outros/L%20no%20Nakama.mp3',
-      no: 'https://night-games.github.io/projects/Outros/Rem.mp3'
+      yes: 'https://night-games.github.io/projects/Outros/msc_amor.mp3',
+      no: 'https://night-games.github.io/projects/Outros/msc2_amor.mp3'
     };
 
     function startExperience(text, audioUrl) {
-      overlay.style.display = 'none';
-      mainText.textContent = text;
-      main.style.display = 'flex';
-      
-      audioSource.src = audioUrl;
-      audio.load();
-      audio.play();
-      
+	  yesBtn.disabled = true;
+	  noBtn.disabled = true;
+	
+	  const link = document.querySelector('.link-wrapper');
+	  link.style.pointerEvents = 'none';
+	  	
+	  mainText.textContent = text;
+	  main.style.display = 'flex';
+	  
+	  audioSource.src = audioUrl;
+	  audio.load();
+	  audio.play();
+	  
+	  overlay.style.opacity = 0;
+	  
+	  setTimeout(() => {
+	  overlay.style.display = 'none';
+	}, 7000);
+	  
       document.title = text;
     }
 
