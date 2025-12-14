@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="https://night-games.github.io/projects/Outros/patinha_amor.png" type="image/png">
+  <title>Are you in love ?</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      font-family: Georgia, 'Times New Roman', serif;
+    }
+
+    body {
+      background: black;
+      overflow: hidden;
+    }
+
+    /* OVERLAY - Tela preta inicial */
+    #overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: black;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+	  
+	  opacity: 1;
+	  transition: opacity 7s ease;
+    }
+
+    #overlay h1 {
+      color: white;
+      font-size: 5rem;
+      text-shadow: 2px 2px 10px black;
+      margin: 0;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-weight: normal;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    #overlay button {
+      background: none;
+      color: white;
+      border: 2px solid white;
+      padding: 1rem 2rem;
+      margin: 0.5rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    #overlay button:hover {
+      background: white;
+      color: black;
+    }
+
+    #overlay > div {
+      margin-top: 5rem;
+      display: flex;
+      gap: 1rem;
+    }
+    
+    #main {
+      display: none;
+      height: 100vh;
+      width: 100vw;
+      position: relative;
+      background: url('https://r2.guns.lol/10f23612-4105-4d92-85ce-82fe1349435e.gif') no-repeat center center;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+	#main::before {
+	  content: "";
+	  position: absolute;
+	  top: 0; left: 0;
+	  width: 100%;
+	  height: 100%;
+	  background-color: rgba(0,0,0,0.2);
+	  z-index: 1;
+	}
+
+    #main h1 {
+      color: white;
+      font-size: 5rem;
+      text-shadow: 2px 2px 10px black;
+      margin: 0;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-weight: normal;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+	  
+	  position: relative;
+	  z-index: 2;
+    }
+	
+    #main h1:hover {
+      transform: translateY(-10px);
+    }
+  
+    #overlay h1:hover {
+      transform: translateY(-10px);
+    }
+	
+	.hover-gradient {
+	  position: relative;
+	  display: inline-block;
+	  cursor: pointer;
+	  color: white;
+	  overflow: hidden;
+	}
+	
+	.hover-gradient::after {
+	  content: "Are you in love ?";
+	  position: absolute;
+	  top: 0; left: 0;
+	  width: 0;
+	  height: 100%;
+	  color: #FF8AED;
+	  overflow: hidden;
+	  white-space: nowrap;
+	  transition: width 0.8s ease;
+	}
+	
+	.hover-gradient:hover::after {
+	  width: 100%;
+	}
+
+	.link-wrapper {
+      text-decoration: none;
+      color: inherit;
+      display: inline-block;
+	}
+	
+  </style>
+</head>
+<body>  
+  <div id="overlay">    
+	<a href="https://steamcommunity.com/id/BonnieBlonde" target="_blank" class="link-wrapper">
+	  <h1 class="hover-gradient">Are you in love ?</h1>
+	</a>
+    <div>
+      <button id="yesBtn">Yes</button>
+      <!--<button id="noBtn">No</button>-->
+    </div>
+  </div>
+
+  <div id="main">
+    <h1 id="mainText"></h1>
+  </div>
+
+  <audio id="bgAudio" loop>
+    <source id="audioSource" src="https://night-games.github.io/projects/Outros/msc_amor.mp3" type="audio/mpeg" />
+  </audio>
+
+  <script>
+    const overlay = document.getElementById('overlay');
+    const main = document.getElementById('main');
+    const mainText = document.getElementById('mainText');
+    const audio = document.getElementById('bgAudio');
+    const audioSource = document.getElementById('audioSource');
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    
+    const audioLinks = {
+      yes: 'https://night-games.github.io/projects/Outros/msc_amor.mp3',
+      no: 'https://night-games.github.io/projects/Outros/msc2_amor.mp3'
+    };
+
+    function startExperience(text, audioUrl) {
+	  yesBtn.disabled = true;
+	  //noBtn.disabled = true;
+	
+	  const link = document.querySelector('.link-wrapper');
+	  link.style.pointerEvents = 'none';
+	  	
+	  mainText.textContent = text;
+	  main.style.display = 'flex';
+	  
+	  audioSource.src = audioUrl;
+	  audio.load();
+	  audio.play();
+	  
+	  overlay.style.opacity = 0;
+	  
+	  setTimeout(() => {
+	  overlay.style.display = 'none';
+	}, 7000);
+	  
+      document.title = text;
+    }
+
+    yesBtn.addEventListener('click', () => startExperience('So am I', audioLinks.yes));
+    noBtn.addEventListener('click', () => startExperience('Because I am', audioLinks.no));
+  </script>
+</body>
+</html>
