@@ -1,0 +1,20 @@
+{
+  "filmes": [
+    {
+      "titulo": "Blade Runner",
+      "ano": 1982
+    }
+  ],
+  "livros": [
+    {
+      "titulo": "Duna",
+      "autor": "Frank Herbert"
+    }
+  ],
+  "jogos": [
+    {
+      "titulo": "Elden Ring",
+      "plataforma": "PC"
+    }
+  ]
+}

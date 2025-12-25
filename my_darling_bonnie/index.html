@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Bonnie <3</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f0f0f;
+      color: #eaeaea;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .spotify-player {
+      display: block;
+      margin: 20px auto;
+      width: 500px;
+      height: 500px;
+      border-radius: 12px;
+    }
+
+    /* GRID DAS LISTAS */
+    .grid-listas {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      max-width: 1920px;
+      margin: 40px auto;
+    }
+
+    section {
+      background: #1c1c1c;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 0;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #2a2a2a;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    /* RESPONSIVO (celular) */
+    @media (max-width: 800px) {
+      .grid-listas {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Do fundo da minha alma... Eu te amo, Bonnie. <3</h1>
+
+<!--
+  <iframe
+    class="spotify-player"
+    src="https://open.spotify.com/embed/playlist/1LtDiuZS8xGJLdIWliNy0a"
+    frameborder="0"
+    allow="encrypted-media"
+    loading="lazy">
+  </iframe>
+-->
+  <div class="grid-listas">
+
+    <section>
+      <h2>🎬 Filmes</h2>
+      <ul id="lista-filmes">        
+      </ul>
+    </section>
+
+    <section>
+      <h2>📚 Livros</h2>
+      <ul id="lista-livros">        
+      </ul>
+    </section>
+
+    <section>
+      <h2>🎮 Jogos</h2>
+      <ul id="lista-jogos">        
+      </ul>
+    </section>
+
+  </div>
+
+	<script>
+	fetch("logs.json")
+		.then(res => res.json())
+		.then(data => {
+	
+		// FILMES
+		const filmes = document.getElementById("lista-filmes");
+		data.filmes.forEach(filme => {
+			const li = document.createElement("li");
+			li.textContent = `${filme.titulo} (${filme.ano})`;
+			filmes.appendChild(li);
+		});
+	
+		// LIVROS
+		const livros = document.getElementById("lista-livros");
+		data.livros.forEach(livro => {
+			const li = document.createElement("li");
+			li.textContent = `${livro.titulo} — ${livro.autor}`;
+			livros.appendChild(li);
+		});
+	
+		// JOGOS
+		const jogos = document.getElementById("lista-jogos");
+		data.jogos.forEach(jogo => {
+			const li = document.createElement("li");
+			li.textContent = `${jogo.titulo} — ${jogo.plataforma}`;
+			jogos.appendChild(li);
+		});
+	
+		});
+	</script>
+</body>
+</html>
